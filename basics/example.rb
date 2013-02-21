@@ -20,10 +20,32 @@ class Article
     end
 
     def points
-        return @likes - @dislikes
+        @likes - @dislikes
     end
 
     def votes
-        return @likes + @dislikes
+        @likes + @dislikes
+    end
+
+    def long_lines
+        (0..(@body.length-1)/80).map{|i|@body[i*80,80]}
+    end
+
+    def length
+        @body.length
+    end
+
+    def truncate(limit)
+        if @body.length > limit
+            trunc = @body[0...limit-3]
+            trunc += "..."
+            trunc
+        else
+            @body
+        end
+    end
+
+    def contain?(regexp)
+        !!@body.match(regexp)
     end
 end
