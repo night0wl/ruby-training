@@ -7,5 +7,23 @@ class Article
         @body = body
         @author = author
         @created_at = Time.now
+        @likes = 0
+        @dislikes = 0
+    end
+
+    def like!
+        @likes += 1
+    end
+
+    def dislike!
+        @dislikes += 1
+    end
+
+    def points
+        return @likes - @dislikes
+    end
+
+    def votes
+        return @likes + @dislikes
     end
 end
