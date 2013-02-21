@@ -10,9 +10,15 @@ class ArticlesFileSystem
     def save(articles)
         articles.each do |article|
             f_name = @dir + article.title.downcase.gsub(" ", "_") + ".article"
-            f = File.new(f_name, 'w')
-            f.write("#{article.author}||#{article.likes}||#{article.dislikes}||#{article.body}")
-            f.close
+            attrs = [
+                article.author,
+                article.likes,
+                article.dislikes,
+                article.body
+                ]
+            File.open(f_name, 'w') do |f|
+                f.write(attrs.join("||"))
+            end
         end
     end
 end
