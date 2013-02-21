@@ -1,6 +1,19 @@
-class ArticleFileSystem
-    def initialize(directory)
-        @directory = directory
+class ArticlesFileSystem
+    def initialize(dir)
+        if dir[-1] == "/"
+            @dir = dir
+        else
+            @dir = dir + "/"
+        end
+    end
+
+    def save(articles)
+        articles.each do |article|
+            f_name = @dir + article.title.downcase.gsub(" ", "_") + ".article"
+            f = File.new(f_name, 'w')
+            f.write("#{article.author}||#{article.likes}||#{article.dislikes}||#{article.body}")
+            f.close
+        end
     end
 end
 
