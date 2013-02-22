@@ -1,4 +1,9 @@
+class NoArticlesFound < StandardError
+end
+
 class WebPage
+  attr_reader :articles
+
   def initialize(dir="/")
     @dir = dir
     @file_system = ArticlesFileSystem.new(dir)
@@ -31,11 +36,11 @@ class WebPage
   end
 
   def best_article
-    best_articles[0] or raise NoArticlesFound
+    best_articles.first or raise NoArticlesFound, "There are no articles"
   end
 
   def worst_article
-    worst_articles[0] or raise NoArticlesFound
+    worst_articles.first or raise NoArticlesFound, "There are no articles"
   end
 
   def most_controversial_articles
@@ -62,7 +67,9 @@ class WebPage
     authors_statistics.sort_by { |key, value| -value }[0][0]
   end
 
-
+  def search(query)
+    @articles.select{ |i| i.contain?(query) }
+  end
 end
 
 class ArticlesFileSystem
@@ -92,7 +99,7 @@ class ArticlesFileSystem
 
   def load
     array = Dir.entries(@dir)
-    array = array.reject{ |i| !i.match(/\.article$/) }
+    array = array.select{ |i| i.match(/\.article$/) }
     array.map{ |i|
       author, likes, dislikes, body = File.read(File.join(@dir, i)).split('||')
       i.slice! ".article"
