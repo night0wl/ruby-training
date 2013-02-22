@@ -17,6 +17,30 @@ class WebPage
     article = Article.new(title, body, author)
     @articles << article
   end
+
+  def longest_articles
+    @articles.sort_by { |i| -i.body.length }
+  end
+
+  def best_articles
+    @articles.sort_by { |i| -i.points }
+  end
+
+  def worst_articles
+    @articles.sort_by { |i| i.points }
+  end
+
+  def best_article
+    best_articles[0] or raise NoArticlesFound
+  end
+
+  def worst_article
+    worst_articles[0] or raise NoArticlesFound
+  end
+
+  def most_controversial_articles
+    @articles.sort_by { |i| -i.votes }
+  end
 end
 
 class ArticlesFileSystem
