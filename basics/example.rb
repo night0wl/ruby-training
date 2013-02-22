@@ -17,7 +17,7 @@ class ArticlesFileSystem
     articles.each do |article|
       attrs = [article.author, article.likes, article.dislikes, article.body]
 
-      File.open(file_name(article) 'w') do |f|
+      File.open(file_name(article), 'w') do |f|
         f.write(file_content(attrs))
       end
     end
