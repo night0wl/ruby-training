@@ -1,21 +1,21 @@
 class ArticlesFileSystem
     def initialize(dir)
-        if dir[-1] == "/"
-            @dir = dir
-        else
-            @dir = dir + "/"
-        end
+        @dir = dir
     end
 
     def save(articles)
         articles.each do |article|
-            f_name = @dir + article.title.downcase.gsub(" ", "_") + ".article"
+            f_name = File.join(
+                @dir, article.title.downcase.gsub(" ", "_") + ".article"
+                )
+
             attrs = [
                 article.author,
                 article.likes,
                 article.dislikes,
                 article.body
                 ]
+
             File.open(f_name, 'w') do |f|
                 f.write(attrs.join("||"))
             end
@@ -26,7 +26,7 @@ class ArticlesFileSystem
         array = Dir.entries(@dir)
         array = array.reject{ |i| !i.match(/\.article$/) }
         array.map{ |i|
-            author, likes, dislikes, body = File.read(@dir+i).split('||')
+            author, likes, dislikes, body = File.read(File.join(@dir, i)).split('||')
             article = Article.new(
                 i.tr("_"," ").capitalize,
                 body,
