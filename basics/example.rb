@@ -21,13 +21,30 @@ class ArticlesFileSystem
             end
         end
     end
+
+    def load
+        array = Dir.entries(@dir)
+        array = array.reject{ |i| !i.match(/\.article$/) }
+        array.map{ |i|
+            author, likes, dislikes, body = File.read(@dir+i).split('||')
+            article = Article.new(
+                i.tr("_"," ").capitalize,
+                body,
+                author
+            )
+            article.likes = likes.to_i
+            article.dislikes = dislikes.to_i
+            article
+        }
+        array
+    end
 end
 
 class Article
     attr_reader :title, :body, :author, :created_at
     attr_accessor :likes, :dislikes
 
-    def initialize(title, body, author)
+    def initialize(title, body, author=nil)
         @title = title
         @body = body
         @author = author
