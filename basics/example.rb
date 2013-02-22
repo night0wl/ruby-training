@@ -1,3 +1,24 @@
+class WebPage
+  def initialize(dir="/")
+    @dir = dir
+    @file_system = ArticlesFileSystem.new(dir)
+    @articles = load
+  end
+
+  def load
+    @file_system.load
+  end
+
+  def save
+    @file_system.save(@articles)
+  end
+
+  def new_article(title, body, author=nil)
+    article = Article.new(title, body, author)
+    @articles << article
+  end
+end
+
 class ArticlesFileSystem
   def initialize(dir)
     @dir = dir
