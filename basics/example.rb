@@ -1,7 +1,7 @@
-class NoArticlesFound < StandardError
-end
 
 class WebPage
+  class NoArticlesFound < StandardError
+  end
   attr_reader :articles
 
   def initialize(dir="/")
@@ -24,15 +24,15 @@ class WebPage
   end
 
   def longest_articles
-    @articles.sort_by { |i| -i.body.length }
+    @articles.sort_by { |article| article.body.length }.reverse
   end
 
   def best_articles
-    @articles.sort_by { |i| -i.points }
+    worst_articles.reverse
   end
 
   def worst_articles
-    @articles.sort_by { |i| i.points }
+    @articles.sort_by { |article| article.points }
   end
 
   def best_article
@@ -44,7 +44,7 @@ class WebPage
   end
 
   def most_controversial_articles
-    @articles.sort_by { |i| -i.votes }
+    @articles.sort_by { |article| article.votes }.reverse
   end
 
   def votes
@@ -52,7 +52,7 @@ class WebPage
   end
 
   def authors
-    @articles.uniq { |article| article.author }
+    @articles.map { |article| article.author }.uniq
   end
 
   def authors_statistics
@@ -64,11 +64,11 @@ class WebPage
   end
 
   def best_author
-    authors_statistics.sort_by { |key, value| -value }[0][0]
+    authors_statistics.sort_by { |key, value| value }.last[0]
   end
 
   def search(query)
-    @articles.select{ |i| i.contain?(query) }
+    @articles.select{ |article| article.contain?(query) }
   end
 end
 
@@ -78,21 +78,18 @@ class ArticlesFileSystem
   end
 
   def file_name(article)
-    File.join(
-      @dir, article.title.downcase.gsub(" ", "_") + ".article"
-      )
+    File.join(@dir, article.title.downcase.gsub(" ", "_") + ".article")
   end
 
-  def file_content(attrs)
-      attrs.join("||")
+  def file_content(article)
+    [article.author, article.likes, article.dislikes, article.body].join("||")
   end
 
   def save(articles)
     articles.each do |article|
-      attrs = [article.author, article.likes, article.dislikes, article.body]
 
       File.open(file_name(article), 'w') do |f|
-        f.write(file_content(attrs))
+        f.write(file_content(article))
       end
     end
   end
@@ -138,7 +135,7 @@ class Article
   end
 
   def long_lines
-    (0..(@body.length-1)/80).map{|i|@body[i*80,80]}
+    body.lines.select { |i| i.length >= 80 }
   end
 
   def length
