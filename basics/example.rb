@@ -28,16 +28,12 @@ class ArticlesFileSystem
     array = array.reject{ |i| !i.match(/\.article$/) }
     array.map{ |i|
       author, likes, dislikes, body = File.read(File.join(@dir, i)).split('||')
-      article = Article.new(
-        i.tr("_"," ").capitalize,
-        body,
-        author
-      )
+      i.slice! ".article"
+      article = Article.new(i.tr("_"," ").capitalize, body, author)
       article.likes = likes.to_i
       article.dislikes = dislikes.to_i
       article
     }
-    array
   end
 end
 
