@@ -41,6 +41,28 @@ class WebPage
   def most_controversial_articles
     @articles.sort_by { |i| -i.votes }
   end
+
+  def votes
+    @articles.inject(0) { |sum, article| sum + article.votes }
+  end
+
+  def authors
+    @articles.uniq { |article| article.author }
+  end
+
+  def authors_statistics
+    stats = Hash.new(0)
+    @articles.each do |article|
+      stats[article.author] += 1
+    end
+    stats
+  end
+
+  def best_author
+    authors_statistics.sort_by { |key, value| -value }[0][0]
+  end
+
+
 end
 
 class ArticlesFileSystem
